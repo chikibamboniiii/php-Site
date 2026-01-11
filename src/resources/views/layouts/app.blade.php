@@ -1,75 +1,86 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Мой сайт на Laravel')</title>
+    <title>@yield('title', 'Аренда манипулятора в Минске')</title>
+
+    <!-- Tailwind CSS + DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.4.19/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Arial', sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            min-height: 100vh;
+        /* Hover эффекты */
+        .hover-scale:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s ease;
         }
-        .header {
-            background: rgba(0,0,0,0.2);
-            padding: 1rem 0;
-            backdrop-filter: blur(10px);
+
+        .hover-shadow:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transition: box-shadow 0.3s ease;
         }
-        .nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            gap: 2rem;
-            padding: 0 2rem;
+
+        /* Плавные переходы для темы */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-        .nav a {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            transition: background 0.3s;
+
+        /* Анимация для модального окна */
+        .modal-box {
+            animation: modalSlideIn 0.3s ease;
         }
-        .nav a:hover {
-            background: rgba(255,255,255,0.1);
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        .content {
-            background: rgba(255,255,255,0.1);
-            padding: 2rem;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-        }
-        .footer {
-            text-align: center;
-            padding: 2rem;
-            margin-top: 2rem;
-            background: rgba(0,0,0,0.2);
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
     </style>
 </head>
-<body>
-    <header class="header">
-        <nav class="nav">
-            <a href="{{ url('/') }}">Главная</a>
-            <a href="{{ url('/about') }}">О нас</a>
-            <a href="{{ url('/contact') }}">Контакты</a>
-        </nav>
-    </header>
+<body class="min-h-screen flex flex-col">
 
-    <main class="container">
-        <div class="content">
-            @yield('content')
-        </div>
-    </main>
+<!-- Header с навигацией -->
+@include('components.header')
 
-    <footer class="footer">
-        <p>&copy; {{ date('Y') }} Мой сайт на Laravel. Все права защищены.</p>
-    </footer>
+<!-- Основной контент -->
+<main class="flex-grow">
+    @yield('content')
+</main>
+
+<!-- Footer -->
+@include('components.footer')
+
+<!-- Модальное окно обратной связи -->
+@include('components.contact-modal')
+
+<script>
+    // Переключение темы
+    function toggleTheme() {
+        const html = document.documentElement;
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+    }
+
+    // Загрузка сохранённой темы
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    });
+
+    // Открытие модального окна
+    function openContactModal() {
+        document.getElementById('contact-modal').checked = true;
+    }
+</script>
+
+@stack('scripts')
 </body>
 </html>
